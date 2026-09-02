@@ -396,11 +396,12 @@ export const DevDashboard = () => {
       <div className="border-b border-[#27272a] bg-[#09090b] px-6 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2 text-xs font-semibold overflow-x-auto">
           {[
-            { id: 'overview', label: 'System Overview & Health', icon: Activity },
-            { id: 'database', label: 'PostgreSQL Database Explorer', icon: Database },
-            { id: 'api',      label: 'Interactive REST API Runner', icon: Play },
-            { id: 'streams',  label: 'WebRTC Mesh & Broadcasts', icon: Radio },
-            { id: 'logs',     label: 'Live Production Logs', icon: Terminal },
+            { id: 'overview',  label: 'System Overview & Health', icon: Activity },
+            { id: 'analytics', label: 'Foundation & CSR Analytics', icon: BarChart3 },
+            { id: 'database',  label: 'PostgreSQL Database Explorer', icon: Database },
+            { id: 'api',       label: 'Interactive REST API Runner', icon: Play },
+            { id: 'streams',   label: 'WebRTC Mesh & Broadcasts', icon: Radio },
+            { id: 'logs',      label: 'Live Production Logs', icon: Terminal },
           ].map(tab => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -506,6 +507,68 @@ export const DevDashboard = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: FOUNDATION & CSR ANALYTICS (EXCLUSIVELY IN DEV DASHBOARD) ── */}
+        {activeTab === 'analytics' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-1.5">
+                <div className="text-xs text-zinc-400">Total Enrolled CS Scholars</div>
+                <div className="text-2xl font-bold text-white">15,420</div>
+                <div className="text-[11px] text-emerald-400 font-medium">Active across 42 Schools</div>
+              </div>
+
+              <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-1.5">
+                <div className="text-xs text-zinc-400">Female Participation Ratio</div>
+                <div className="text-2xl font-bold text-white">48.5%</div>
+                <div className="text-[11px] text-zinc-400">7,480 Girls active in Python & Web</div>
+              </div>
+
+              <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-1.5">
+                <div className="text-xs text-zinc-400">First-Gen Computer Coders</div>
+                <div className="text-2xl font-bold text-white">68.2%</div>
+                <div className="text-[11px] text-zinc-400">From rural & tribal belt schools</div>
+              </div>
+
+              <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-1.5">
+                <div className="text-xs text-zinc-400">CS Labs Operational</div>
+                <div className="text-2xl font-bold text-white">40 / 42</div>
+                <div className="text-[11px] text-emerald-400 font-medium">95.2% Live Broadcast Readiness</div>
+              </div>
+            </div>
+
+            {/* CSR Donors & Hardware Allocations */}
+            <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-3">
+              <div className="flex items-center justify-between border-b border-[#27272a] pb-3">
+                <span className="text-sm font-bold text-white">
+                  CSR Foundation Grants & Hardware Allocations (Audited)
+                </span>
+                <span className="text-xs text-zinc-400 font-mono">FY 2025-26</span>
+              </div>
+
+              <div className="divide-y divide-[#1e1e24] text-xs">
+                {[
+                  { name: "Global Tech for Education Initiative", contribution: "120 Laptops & Smart Labs", cycle: "2025-26", status: "Active" },
+                  { name: "Bharat Digital Shiksha Trust", contribution: "High-Speed Satellite Terminals (15 Schools)", cycle: "2025-26", status: "Verified" },
+                  { name: "Infosys Foundation Partner Grant", contribution: "CS Teacher Training Program for 480 Mentors", cycle: "2026-27", status: "Allocated" }
+                ].map((grant, idx) => (
+                  <div key={idx} className="py-3 flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-white">{grant.name}</div>
+                      <div className="text-zinc-400 text-[11px]">{grant.contribution}</div>
+                    </div>
+                    <div className="text-right">
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-mono text-[10px] font-bold">
+                        {grant.status}
+                      </span>
+                      <div className="text-[10px] text-zinc-500 font-mono mt-0.5">{grant.cycle}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

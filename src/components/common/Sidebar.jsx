@@ -87,7 +87,6 @@ export const Sidebar = () => {
         
         {renderNavSection('Overview', [
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { id: 'ngo-impact', label: 'Analytics', icon: Activity },
         ])}
 
         {renderNavSection('Directories', [

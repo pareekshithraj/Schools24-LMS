@@ -10,7 +10,6 @@ import { AssignmentsManager } from './components/assignments/AssignmentsManager'
 import { SchoolsClusterManager } from './components/schools/SchoolsClusterManager';
 import { StudentDirectory } from './components/directory/StudentDirectory';
 import { TeacherDirectory } from './components/directory/TeacherDirectory';
-import { NgoImpactDashboard } from './components/analytics/NgoImpactDashboard';
 import { TrustAdminView } from './components/roles/TrustAdminView';
 import { PrincipalView } from './components/roles/PrincipalView';
 import { TeacherView } from './components/roles/TeacherView';
@@ -59,8 +58,6 @@ export const App = () => {
         return <StudentDirectory />;
       case 'teachers-directory':
         return <TeacherDirectory />;
-      case 'ngo-impact':
-        return <NgoImpactDashboard />;
       case 'dashboard':
       default:
         switch(currentRole) {
