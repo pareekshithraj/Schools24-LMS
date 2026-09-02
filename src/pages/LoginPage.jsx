@@ -8,7 +8,6 @@ const ROLE_PRESETS = [
   { role: 'principal', label: 'School Principal',  email: 'principal@vidyasetu.org', color: 'from-blue-500 to-cyan-500',     initials: 'PR', desc: 'School node management' },
   { role: 'teacher',   label: 'CS Teacher',        email: 'teacher@vidyasetu.org',   color: 'from-emerald-500 to-teal-500', initials: 'TC', desc: 'Live classes & grading' },
   { role: 'student',   label: 'Student',           email: 'student@vidyasetu.org',   color: 'from-amber-400 to-orange-500', initials: 'AS', desc: 'Learn & code' },
-  { role: 'parent',    label: 'Parent / Guardian', email: 'parent@vidyasetu.org',    color: 'from-pink-500 to-rose-500',    initials: 'PG', desc: 'Track ward progress' },
 ];
 
 export const LoginPage = () => {

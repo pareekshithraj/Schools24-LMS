@@ -46,18 +46,6 @@ const DEFAULT_PRINCIPAL = {
   csLiveStreamParticipation: "98.2%"
 };
 
-const DEFAULT_PARENT = {
-  id: "PAR-904",
-  name: "Parent / Guardian",
-  wardName: "Aarav Sharma",
-  wardRoll: "001",
-  wardSchool: "Adarsh Vidya Mandir #01 (Central)",
-  wardGrade: "Grade 9",
-  overallAttendance: "98.4%",
-  recentLiveClassAttended: "Python Data Structures",
-  lastAssignmentScore: "100/100"
-};
-
 const DEFAULT_IMPACT = {
   trustName: "VidyaSetu Foundation",
   csrDonors: [
@@ -102,7 +90,6 @@ export const AppProvider = ({ children }) => {
   const [student, setStudent] = useState(DEFAULT_STUDENT);
   const [teacher, setTeacher] = useState(DEFAULT_TEACHER);
   const [principal, setPrincipal] = useState(DEFAULT_PRINCIPAL);
-  const [parent, setParent] = useState(DEFAULT_PARENT);
   const [impactMetrics, setImpactMetrics] = useState(DEFAULT_IMPACT);
   const [dbConnected, setDbConnected] = useState(true);
 
@@ -671,7 +658,6 @@ solve_problem()
       student,
       teacher,
       principal,
-      parent,
       impactMetrics,
       notifications,
       addNotification,

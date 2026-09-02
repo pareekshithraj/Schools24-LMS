@@ -15,7 +15,6 @@ import { TrustAdminView } from './components/roles/TrustAdminView';
 import { PrincipalView } from './components/roles/PrincipalView';
 import { TeacherView } from './components/roles/TeacherView';
 import { StudentView } from './components/roles/StudentView';
-import { ParentView } from './components/roles/ParentView';
 import { Bell } from 'lucide-react';
 
 const GlobalToasts = () => {
@@ -71,8 +70,6 @@ export const App = () => {
             return <PrincipalView />;
           case 'teacher':
             return <TeacherView />;
-          case 'parent':
-            return <ParentView />;
           case 'student':
           default:
             return <StudentView />;

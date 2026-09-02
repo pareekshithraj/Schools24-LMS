@@ -180,9 +180,6 @@ export const LandingPage = () => {
             <a href="#explorer" className="hover:text-white transition-colors">Live Studio</a>
             <a href="#pipeline" className="hover:text-white transition-colors">How It Works</a>
             <a href="#trust" className="hover:text-white transition-colors">Trust Network</a>
-            <Link to="/dev" className="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1">
-              <Terminal className="h-3.5 w-3.5" /> Dev Console
-            </Link>
           </nav>
 
           {/* Right Action CTAs */}
@@ -515,13 +512,6 @@ export const LandingPage = () => {
             >
               Get Started with Schools24 LMS
             </button>
-            <button
-              onClick={() => navigate('/dev')}
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-base border border-zinc-700 transition-colors flex items-center justify-center gap-2"
-            >
-              <Terminal className="h-4 w-4 text-amber-400" />
-              <span>Developer Dashboard</span>
-            </button>
           </div>
 
         </div>
@@ -540,8 +530,8 @@ export const LandingPage = () => {
 
           <div className="flex items-center gap-6 font-medium text-zinc-400">
             <button onClick={() => navigate('/login')} className="hover:text-white transition-colors">Sign In</button>
-            <button onClick={() => navigate('/dev')} className="hover:text-white transition-colors">Dev Dashboard</button>
             <a href="#capabilities" className="hover:text-white transition-colors">Platform</a>
+            <a href="#explorer" className="hover:text-white transition-colors">Studio</a>
             <a href="#trust" className="hover:text-white transition-colors">Trust Network</a>
           </div>
 

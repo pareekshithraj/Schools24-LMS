@@ -9,7 +9,6 @@ const ROLES = [
   { id: 'principal', label: 'School Principal',  initials: 'PR', color: 'from-blue-500 to-cyan-500' },
   { id: 'teacher',   label: 'CS Teacher',        initials: 'TC', color: 'from-emerald-400 to-teal-500' },
   { id: 'student',   label: 'Student',           initials: 'AS', color: 'from-orange-400 to-amber-500' },
-  { id: 'parent',    label: 'Parent / Guardian', initials: 'PG', color: 'from-pink-400 to-rose-500' },
 ];
 
 export const Header = () => {
