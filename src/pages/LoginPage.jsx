@@ -21,13 +21,6 @@ export const LoginPage = () => {
   const [error, setError]       = useState('');
   const [selectedRole, setSelectedRole] = useState(null);
 
-  const handleRoleClick = (preset) => {
-    setSelectedRole(preset.role);
-    setEmail(preset.email);
-    setPassword('superadmin123'); // Updated for new bcrypt default
-    setError('');
-  };
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
@@ -124,40 +117,33 @@ export const LoginPage = () => {
 
         <div className="w-full max-w-md">
 
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-[#fafafa] tracking-tight">Sign in to VidyaSetu</h1>
-            <p className="text-sm text-[#52525b] mt-1">Select a demo role or enter your credentials</p>
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-[#fafafa] tracking-tight">Log In to Schools24 LMS</h1>
+            <p className="text-xs text-[#52525b] mt-1">Enter your organization email and password to access your dashboard</p>
           </div>
 
-          {/* Role Quick-Select */}
-          <div className="mb-6">
-            <div className="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest mb-3">Quick Access (Demo)</div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {/* Role Reference Guide (Purely for Reference - No Auto-Fill) */}
+          <div className="mb-6 bg-[#09090b] border border-[#1f1f23] rounded-xl p-3.5">
+            <div className="text-[10px] font-bold text-[#71717a] uppercase tracking-wider mb-2 flex items-center justify-between">
+              <span>Authorized System Roles (Reference Only)</span>
+              <span className="text-[9px] text-amber-400 font-mono">Manual Entry Required</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
               {ROLE_PRESETS.map(preset => (
-                <button
+                <div
                   key={preset.role}
-                  onClick={() => handleRoleClick(preset)}
-                  className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border transition-all text-left
-                    ${selectedRole === preset.role
-                      ? 'border-[#52525b] bg-[#111111]'
-                      : 'border-[#1a1a1a] hover:border-[#27272a] hover:bg-[#0a0a0a]'
-                    }`}
+                  className="flex items-center gap-2 p-2 rounded-lg bg-[#111113] border border-[#27272a]/60 text-left select-none"
                 >
-                  <div className={`h-7 w-7 rounded-lg bg-gradient-to-br ${preset.color} flex items-center justify-center text-white font-bold text-[10px]`}>
+                  <div className={`h-6 w-6 rounded-md bg-gradient-to-br ${preset.color} flex items-center justify-center text-white font-bold text-[9px] shrink-0`}>
                     {preset.initials}
                   </div>
-                  <div className="text-xs font-semibold text-[#fafafa] leading-tight">{preset.label}</div>
-                  <div className="text-[10px] text-[#52525b]">{preset.desc}</div>
-                </button>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[11px] font-semibold text-[#fafafa] truncate">{preset.label}</div>
+                    <div className="text-[9px] text-zinc-500 font-mono truncate">{preset.email}</div>
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-px flex-1 bg-[#111111]" />
-            <span className="text-[10px] text-[#27272a] font-medium">OR SIGN IN WITH EMAIL</span>
-            <div className="h-px flex-1 bg-[#111111]" />
           </div>
 
           {/* Form */}

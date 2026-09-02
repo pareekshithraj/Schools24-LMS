@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import {
-  Server, Database, Activity, Zap, Shield, RefreshCw,
-  CheckCircle2, AlertTriangle, XCircle, ArrowLeft, Copy, Check,
-  Cpu, HardDrive, Wifi, Code2, GitBranch, Package, Clock,
-  TrendingUp, Users, Building2, BarChart3, Terminal, ExternalLink,
-  Play, Send, Search, Filter, Layers, Pause, Radio, Lock, Key,
-  LogOut, ShieldAlert, Eye, EyeOff, Sparkles, TerminalSquare
+  Shield, Key, Lock, ArrowLeft, RefreshCw, Database, Radio,
+  Activity, Play, Terminal, BarChart3, Building2, Users,
+  CheckCircle2, AlertTriangle, Code2, Globe, Sparkles,
+  TrendingUp, HardDrive, Cpu, Wifi, Layers, ExternalLink,
+  Search, Filter, Check, Copy, Eye, EyeOff, ShieldAlert,
+  Server, DollarSign, Award, ChevronRight, Zap
 } from 'lucide-react';
 
 /* ── Live Uptime Counter ── */
@@ -34,19 +34,49 @@ const CopyBtn = ({ text }) => {
     setTimeout(() => setCopied(false), 1500);
   };
   return (
-    <button onClick={copy} className="p-1.5 text-zinc-400 hover:text-white transition-colors rounded-md hover:bg-zinc-800">
-      {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+    <button onClick={copy} className="p-1 text-zinc-400 hover:text-white transition-colors rounded hover:bg-zinc-800">
+      {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
     </button>
   );
 };
 
-const SERVICES = [
-  { name: 'Schools24 LMS Vite Engine', url: 'https://schools24-lms.vercel.app', status: 'Operational', latency: '28ms', type: 'Frontend SPA' },
-  { name: 'Express API Gateway',        url: 'http://localhost:3001',             status: 'Operational', latency: '12ms', type: 'Node.js Backend' },
-  { name: 'Neon Serverless PostgreSQL', url: 'ep-ancient-hill.ap-south-1.neon.tech', status: 'Operational', latency: '24ms', type: 'Relational DB' },
-  { name: 'WebRTC Multi-Peer Mesh',     url: 'meet.schools24.in',                 status: 'Operational', latency: '65ms', type: 'Media Relay' },
-  { name: 'Pyodide & Piston Sandbox',   url: 'emkc.org/api/v2/piston',            status: 'Operational', latency: '120ms', type: 'Code Engine' },
-  { name: 'Socket.io Event Gateway',    url: 'ws://localhost:3001',               status: 'Operational', latency: '8ms',  type: 'Push Gateway' },
+/* ── Trust Admin Style Area Sparkline ── */
+const AreaChart = ({ data, color = '#f59e0b' }) => {
+  const values = data || [180, 130, 155, 80, 110, 60, 95, 30, 55];
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || 1;
+  const W = 480, H = 160;
+  const pts = values.map((v, i) => [
+    (i / (values.length - 1)) * W,
+    H - ((v - min) / range) * (H - 20) - 10
+  ]);
+  const pathD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ');
+  const fillD = `${pathD} L${W},${H} L0,${H} Z`;
+  const gradId = `saasArea_${color.replace('#', '')}`;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-full" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.25" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {[40, 80, 120].map(y => (
+        <line key={y} x1="0" y1={y} x2={W} y2={y} stroke="#1f1f22" strokeWidth="1" />
+      ))}
+      <path d={fillD} fill={`url(#${gradId})`} />
+      <path d={pathD} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+      {pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="2.5" fill={color} />)}
+    </svg>
+  );
+};
+
+const SAAS_TENANTS = [
+  { id: 'TNT-001', name: 'VidyaSetu Educational Trust', schools: 42, students: 15420, plan: 'Enterprise CSR', status: 'Active', renewal: 'Aug 2027', mrr: '₹1,25,000/mo' },
+  { id: 'TNT-002', name: 'Sarvodaya Tribal Schools Network', schools: 18, students: 6800, plan: 'State Gov Grant', status: 'Active', renewal: 'Dec 2026', mrr: '₹65,000/mo' },
+  { id: 'TNT-003', name: 'Vivekananda Mission High Schools', schools: 12, students: 4900, plan: 'Foundation Pro', status: 'Active', renewal: 'Nov 2026', mrr: '₹48,000/mo' },
+  { id: 'TNT-004', name: 'Kasturba Memorial Rural Academy', schools: 8, students: 3100, plan: 'Foundation Pro', status: 'Active', renewal: 'Mar 2027', mrr: '₹32,000/mo' },
 ];
 
 const PRESET_ENDPOINTS = [
@@ -71,18 +101,15 @@ const TABLES = [
   { name: 'submissions', rows: 3840, size: '512 KB', desc: 'Automated test execution logs, scores, and timestamps' },
 ];
 
-// Master Developer Passkey
-const DEV_AUTH_KEY = 'schools24_dev_authenticated';
-const VALID_DEV_EMAIL = 'developer@schools24.in';
+const DEV_AUTH_KEY = 'schools24_saas_owner_auth';
+const VALID_DEV_EMAIL = 'owner@schools24.in';
 const VALID_DEV_PASSKEY = 'Schools24-DevSec#2026';
 
 export const DevDashboard = () => {
   const navigate = useNavigate();
-  const { currentUser, currentRole } = useApp();
+  const { currentUser, currentRole, schools = [] } = useApp();
 
-  // Security gatekeeper state
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    // If logged in as Super Admin or previously unlocked in session
     if (sessionStorage.getItem(DEV_AUTH_KEY) === 'true') return true;
     if (currentUser?.email === 'admin@vidyasetu.org' || currentRole === 'admin') return true;
     return false;
@@ -94,8 +121,9 @@ export const DevDashboard = () => {
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
 
-  // Dashboard Tabs
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'api' | 'database' | 'streams' | 'logs'
+  // Active View Tab in Trust Admin style
+  const [activeTab, setActiveTab] = useState('tenants'); // 'tenants' | 'database' | 'api' | 'streams' | 'analytics' | 'logs'
+  const [activePeriod, setActivePeriod] = useState('1M');
   const [refreshing, setRefreshing] = useState(false);
   const [dbConnected, setDbConnected] = useState(true);
   const [dbLatency, setDbLatency] = useState('24ms');
@@ -111,20 +139,16 @@ export const DevDashboard = () => {
   const [apiTime, setApiTime] = useState(null);
 
   // Live Logs
-  const [logFilter, setLogFilter] = useState('ALL');
-  const [logSearch, setLogSearch] = useState('');
   const [isLogStreaming, setIsLogStreaming] = useState(true);
   const [logs, setLogs] = useState([
-    { id: 1, time: '18:40:12', level: 'INFO',  msg: 'GET /api/schools → 200 OK (24ms) · 42 school nodes loaded' },
-    { id: 2, time: '18:41:04', level: 'INFO',  msg: 'Socket.io push gateway ready: WebRTC signaling channel active' },
-    { id: 3, time: '18:41:35', level: 'INFO',  msg: 'GET /api/curriculum → 200 OK (16ms) · Grades 6-12 syllabus synced' },
-    { id: 4, time: '18:42:15', level: 'INFO',  msg: 'Broadcast session "vst-pycs-live" active: 342 student lab peers connected' },
-    { id: 5, time: '18:42:50', level: 'INFO',  msg: 'POST /api/assignments/submit → 201 Created (38ms) · Auto-graded 100/100' },
-    { id: 6, time: '18:43:10', level: 'INFO',  msg: 'Neon PostgreSQL connection pool: healthy (latency: 24ms)' },
-    { id: 7, time: '18:43:45', level: 'WARN',  msg: 'School node SCH-008 (Bankura) running on low-bandwidth fallback stream' },
+    { id: 1, time: '19:20:12', level: 'INFO',  msg: 'SaaS Multi-Tenant Gateway: 4 institutional tenants synced' },
+    { id: 2, time: '19:21:04', level: 'INFO',  msg: 'Neon PostgreSQL Pooler: 4/10 active connections (latency: 24ms)' },
+    { id: 3, time: '19:21:35', level: 'INFO',  msg: 'GET /api/schools → 200 OK (22ms) · 42 school nodes loaded' },
+    { id: 4, time: '19:22:15', level: 'INFO',  msg: 'WebRTC Multi-Peer Mesh: 3 active masterclass streams running' },
+    { id: 5, time: '19:22:50', level: 'INFO',  msg: 'Pyodide WebAssembly engine verified: 0 cold-start latency' },
+    { id: 6, time: '19:23:10', level: 'WARN',  msg: 'School node SCH-008 running on 4G fallback stream' },
   ]);
 
-  // Ping Backend on mount
   const pingHealth = async () => {
     setRefreshing(true);
     const start = performance.now();
@@ -151,22 +175,26 @@ export const DevDashboard = () => {
     }
   }, [isAuthenticated]);
 
-  // Handle Developer Access Submission
   const handleDevLogin = (e) => {
     e.preventDefault();
     setAuthError('');
     setAuthLoading(true);
 
     setTimeout(() => {
+      const cleanEmail = devEmail.trim().toLowerCase();
       if (
-        (devEmail.trim().toLowerCase() === VALID_DEV_EMAIL && devPasskey === VALID_DEV_PASSKEY) ||
-        (devEmail.trim().toLowerCase() === 'admin@vidyasetu.org' && devPasskey === 'superadmin123')
+        (cleanEmail === VALID_DEV_EMAIL || cleanEmail === 'developer@schools24.in') &&
+        devPasskey === VALID_DEV_PASSKEY
       ) {
         sessionStorage.setItem(DEV_AUTH_KEY, 'true');
         setIsAuthenticated(true);
         setAuthError('');
+      } else if (cleanEmail === 'admin@vidyasetu.org' && devPasskey === 'superadmin123') {
+        sessionStorage.setItem(DEV_AUTH_KEY, 'true');
+        setIsAuthenticated(true);
+        setAuthError('');
       } else {
-        setAuthError('Access Denied. Invalid developer clearance credentials.');
+        setAuthError('Access Denied. Invalid SaaS Owner clearance credentials.');
       }
       setAuthLoading(false);
     }, 600);
@@ -178,7 +206,6 @@ export const DevDashboard = () => {
     setDevPasskey('');
   };
 
-  // Run API Test
   const executeApiCall = async () => {
     setApiLoading(true);
     setApiResponse(null);
@@ -220,16 +247,15 @@ export const DevDashboard = () => {
   };
 
   // ─────────────────────────────────────────────────────────────
-  // 🔒 RESTRICTED DEVELOPER ACCESS GATEWAY
+  // 🔒 RESTRICTED SAAS OWNER PASSKEY GATEWAY
   // ─────────────────────────────────────────────────────────────
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#000000] text-white flex flex-col justify-between p-6 selection:bg-amber-500 selection:text-black">
-        {/* Top bar */}
+      <div className="min-h-screen bg-[#000000] text-white flex flex-col justify-between p-6 selection:bg-amber-500 selection:text-black" style={{ fontFamily: 'Inter, sans-serif' }}>
         <div className="flex items-center justify-between max-w-5xl mx-auto w-full">
           <button
             onClick={() => navigate('/app')}
-            className="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors bg-zinc-900/60 hover:bg-zinc-800 px-3.5 py-2 rounded-lg border border-zinc-800"
+            className="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors bg-[#0e0e11] hover:bg-zinc-800 px-3.5 py-2 rounded-lg border border-[#27272a]"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Back to LMS Dashboard</span>
@@ -237,11 +263,10 @@ export const DevDashboard = () => {
 
           <div className="flex items-center gap-2 text-xs text-zinc-500 font-mono">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>PRODUCTION COCKPIT GATE</span>
+            <span>SAAS PLATFORM OWNER GATE</span>
           </div>
         </div>
 
-        {/* Security Login Card */}
         <div className="max-w-md mx-auto w-full py-12">
           <div className="bg-[#09090b] border border-[#27272a] rounded-2xl p-8 shadow-[0_0_60px_rgba(0,0,0,0.8)] relative overflow-hidden">
             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600" />
@@ -253,9 +278,9 @@ export const DevDashboard = () => {
             </div>
 
             <div className="text-center mb-6">
-              <h2 className="text-xl font-bold text-white tracking-tight">Developer Operations Gateway</h2>
+              <h2 className="text-xl font-bold text-white tracking-tight">Schools24 SaaS Owner Portal</h2>
               <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed">
-                Restricted access. Authenticate with verified engineering credentials to inspect telemetry, APIs, and database schemas.
+                Restricted platform administration. Authenticate with SaaS owner clearance credentials to manage multi-tenant clusters, database schemas, and API telemetry.
               </p>
             </div>
 
@@ -268,25 +293,25 @@ export const DevDashboard = () => {
 
             <form onSubmit={handleDevLogin} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Developer Identity</label>
+                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Owner / Engineering Identity</label>
                 <input
                   type="email"
                   value={devEmail}
                   onChange={e => setDevEmail(e.target.value)}
-                  placeholder="developer@schools24.in"
+                  placeholder="owner@schools24.in"
                   className="w-full bg-[#121214] border border-[#27272a] focus:border-amber-500 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Security Passkey</label>
+                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Master Security Passkey</label>
                 <div className="relative">
                   <input
                     type={showPasskey ? 'text' : 'password'}
                     value={devPasskey}
                     onChange={e => setDevPasskey(e.target.value)}
-                    placeholder="Enter clearance key"
+                    placeholder="Enter owner passkey"
                     className="w-full bg-[#121214] border border-[#27272a] focus:border-amber-500 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors pr-10 font-mono"
                     required
                   />
@@ -310,43 +335,41 @@ export const DevDashboard = () => {
                 ) : (
                   <>
                     <Key className="h-4 w-4" />
-                    <span>Authorize & Unlock Cockpit</span>
+                    <span>Authorize & Open SaaS Master Portal</span>
                   </>
                 )}
               </button>
             </form>
 
-            {/* Quick Demo Assist Preset */}
             <div className="mt-6 pt-5 border-t border-[#27272a] text-center">
               <button
                 onClick={() => {
-                  setDevEmail('developer@schools24.in');
+                  setDevEmail('owner@schools24.in');
                   setDevPasskey('Schools24-DevSec#2026');
                 }}
                 className="text-[11px] text-zinc-400 hover:text-amber-400 transition-colors flex items-center justify-center gap-1.5 mx-auto font-mono"
               >
                 <Sparkles className="h-3 w-3 text-amber-400" />
-                <span>Fill Authorized Engineering Clearance</span>
+                <span>Fill Authorized Owner Clearance</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
         <div className="text-center text-xs text-zinc-600 pb-4 font-mono">
-          Schools24 Infrastructure Operations · Level 4 Engineering Node
+          Schools24 SaaS Platform Core · Master Multi-Tenant Engine
         </div>
       </div>
     );
   }
 
   // ─────────────────────────────────────────────────────────────
-  // ⚡ AUTHENTICATED PRODUCTION DEVELOPER DASHBOARD
+  // 🏛️ SAAS OWNER PORTAL (DESIGNED EXACTLY LIKE TRUST ADMIN PORTAL)
   // ─────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#000000] text-[#fafafa] flex flex-col selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen bg-[#000000] text-[#fafafa] flex flex-col selection:bg-amber-500 selection:text-black" style={{ fontFamily: 'Inter, sans-serif' }}>
       
-      {/* ── Cohesive Header (Matching LMS Dashboard Style) ── */}
+      {/* ── Top Header matching Trust Admin ── */}
       <header className="h-14 flex-shrink-0 flex items-center justify-between px-6 border-b border-[#27272a] bg-[#000000] z-30 sticky top-0">
         <div className="flex items-center gap-3 text-sm">
           <button
@@ -358,11 +381,11 @@ export const DevDashboard = () => {
           </button>
           <span className="text-[#3f3f46]">/</span>
           <div className="flex items-center gap-2 font-bold text-white tracking-tight">
-            <TerminalSquare className="h-4 w-4 text-amber-400" />
-            <span>Developer Operations Cockpit</span>
+            <Building2 className="h-4 w-4 text-amber-400" />
+            <span>Schools24 SaaS Owner Command Center</span>
           </div>
           <span className="text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">
-            PROD-SECURED
+            MASTER-OWNER
           </span>
         </div>
 
@@ -387,21 +410,21 @@ export const DevDashboard = () => {
             className="flex items-center gap-1.5 px-3 py-1 bg-red-950/40 hover:bg-red-900/60 border border-red-500/40 text-red-300 rounded-md transition-colors font-sans font-semibold text-xs"
           >
             <Lock className="h-3 w-3" />
-            <span>Lock Console</span>
+            <span>Lock Owner Session</span>
           </button>
         </div>
       </header>
 
-      {/* ── Subheader Navigation Tabs ── */}
+      {/* ── Subheader Navigation Tabs (Trust Admin Style) ── */}
       <div className="border-b border-[#27272a] bg-[#09090b] px-6 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2 text-xs font-semibold overflow-x-auto">
           {[
-            { id: 'overview',  label: 'System Overview & Health', icon: Activity },
-            { id: 'analytics', label: 'Foundation & CSR Analytics', icon: BarChart3 },
-            { id: 'database',  label: 'PostgreSQL Database Explorer', icon: Database },
-            { id: 'api',       label: 'Interactive REST API Runner', icon: Play },
-            { id: 'streams',   label: 'WebRTC Mesh & Broadcasts', icon: Radio },
-            { id: 'logs',      label: 'Live Production Logs', icon: Terminal },
+            { id: 'tenants',   label: 'SaaS Tenants & Overview', icon: Building2 },
+            { id: 'analytics', label: 'Foundation & Telemetry', icon: BarChart3 },
+            { id: 'database',  label: 'PostgreSQL Database', icon: Database },
+            { id: 'api',       label: 'REST API Engine', icon: Play },
+            { id: 'streams',   label: 'WebRTC Mesh Relays', icon: Radio },
+            { id: 'logs',      label: 'Production Logs', icon: Terminal },
           ].map(tab => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -422,85 +445,153 @@ export const DevDashboard = () => {
           })}
         </div>
 
-        <div className="hidden lg:flex items-center gap-2 text-xs text-zinc-500">
-          <span>Uptime:</span> <Uptime />
+        <div className="hidden lg:flex items-center gap-4 text-xs text-zinc-400">
+          <div className="flex items-center gap-1 bg-[#111] border border-[#27272a] rounded-lg p-0.5">
+            {['24H', '7D', '1M', '1Y', 'ALL'].map(p => (
+              <button
+                key={p}
+                onClick={() => setActivePeriod(p)}
+                className={`px-2 py-0.5 rounded text-[10px] font-semibold transition-colors ${
+                  activePeriod === p ? 'bg-amber-500 text-black font-bold' : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-1 text-zinc-500">
+            <span>Uptime:</span> <Uptime />
+          </div>
         </div>
       </div>
 
-      {/* ── Main Tab Content ── */}
+      {/* ── Main Dashboard Body ── */}
       <main className="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
 
-        {/* ── TAB 1: OVERVIEW ── */}
-        {activeTab === 'overview' && (
+        {/* ── TAB 1: SAAS TENANTS & OVERVIEW (TRUST ADMIN STYLE) ── */}
+        {activeTab === 'tenants' && (
           <div className="space-y-6">
-            {/* Top Metric Cards */}
+            
+            {/* Top Metric Cards Strip */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-2">
                 <div className="flex items-center justify-between text-xs text-zinc-400">
-                  <span>PostgreSQL Pool</span>
-                  <Database className="h-4 w-4 text-amber-400" />
-                </div>
-                <div className="text-2xl font-black text-white">4 / 10 Active</div>
-                <div className="text-xs text-emerald-400 font-medium">Auto-scaling Serverless Neon</div>
-              </div>
-
-              <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-2">
-                <div className="flex items-center justify-between text-xs text-zinc-400">
-                  <span>Trust Schools Connected</span>
+                  <span>Total Connected Schools</span>
                   <Building2 className="h-4 w-4 text-blue-400" />
                 </div>
-                <div className="text-2xl font-black text-white">42 Nodes</div>
-                <div className="text-xs text-zinc-400">4 Clusters (North, South, East, West)</div>
+                <div className="text-2xl font-bold text-white">42 School Nodes</div>
+                <div className="text-xs text-emerald-400 font-medium">+8 Nodes Onboarded this Qtr</div>
               </div>
 
               <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-2">
                 <div className="flex items-center justify-between text-xs text-zinc-400">
-                  <span>Live WebRTC Broadcasters</span>
-                  <Radio className="h-4 w-4 text-emerald-400" />
+                  <span>Active CS Student Seats</span>
+                  <Users className="h-4 w-4 text-amber-400" />
                 </div>
-                <div className="text-2xl font-black text-white">3 Active Rooms</div>
-                <div className="text-xs text-emerald-400 font-medium">342 Concurrent Peer Connections</div>
+                <div className="text-2xl font-bold text-white">15,420 Scholars</div>
+                <div className="text-xs text-emerald-400 font-medium">98.4% Daily Attendance</div>
               </div>
 
               <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-2">
                 <div className="flex items-center justify-between text-xs text-zinc-400">
-                  <span>Code Assertions Today</span>
+                  <span>SaaS ARR & Grant Run Rate</span>
+                  <DollarSign className="h-4 w-4 text-emerald-400" />
+                </div>
+                <div className="text-2xl font-bold text-white">₹32.4 Lakhs/yr</div>
+                <div className="text-xs text-zinc-400">4 Institutional Trust Tenants</div>
+              </div>
+
+              <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-2">
+                <div className="flex items-center justify-between text-xs text-zinc-400">
+                  <span>Live Code Submissions</span>
                   <Code2 className="h-4 w-4 text-violet-400" />
                 </div>
-                <div className="text-2xl font-black text-white">3,840 Runs</div>
-                <div className="text-xs text-emerald-400 font-medium">98.4% Pass Rate</div>
+                <div className="text-2xl font-bold text-white">3,840 Today</div>
+                <div className="text-xs text-emerald-400 font-medium">98.2% Test Pass Rate</div>
               </div>
             </div>
 
-            {/* Microservices Health Table */}
-            <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5">
-              <h3 className="text-sm font-bold text-white mb-4 flex items-center justify-between">
-                <span>Infrastructure & Microservices Health</span>
-                <span className="text-xs font-normal text-emerald-400">6/6 Systems Operational</span>
-              </h3>
+            {/* Sparkline & Cluster Analytics Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 flex flex-col justify-between">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-sm font-bold text-white">Platform Code Execution & Student Growth</h3>
+                    <p className="text-xs text-zinc-400">Monthly student submissions across all 42 school nodes</p>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-amber-400">+24.8% Growth</span>
+                </div>
+                <div className="h-44 w-full">
+                  <AreaChart data={[320, 480, 620, 780, 940, 1180, 1420, 1690, 2150]} color="#f59e0b" />
+                </div>
+              </div>
+
+              {/* Multi-Tenant Cluster Quick Cards */}
+              <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-3">
+                <h3 className="text-sm font-bold text-white">Trust Geographic Clusters</h3>
+                <div className="space-y-2.5">
+                  {[
+                    { name: 'Northern Rural Cluster', count: '11 schools', students: '4,120 students', color: 'bg-blue-500' },
+                    { name: 'Southern Valley Cluster', count: '12 schools', students: '4,580 students', color: 'bg-emerald-500' },
+                    { name: 'Eastern Tribal Cluster',  count: '10 schools', students: '3,640 students', color: 'bg-amber-500' },
+                    { name: 'Western Coastal Cluster', count: '9 schools',  students: '3,080 students', color: 'bg-violet-500' },
+                  ].map((c, i) => (
+                    <div key={i} className="p-3 rounded-lg bg-zinc-900/60 border border-zinc-800 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <span className={`h-2.5 w-2.5 rounded-full ${c.color}`} />
+                        <div>
+                          <div className="text-xs font-semibold text-white">{c.name}</div>
+                          <div className="text-[10px] text-zinc-400">{c.students}</div>
+                        </div>
+                      </div>
+                      <span className="text-[11px] font-mono font-bold text-zinc-300">{c.count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Institutional SaaS Tenants Table */}
+            <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-4">
+              <div className="flex items-center justify-between border-b border-[#27272a] pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-white">Institutional SaaS Tenants & Multi-School Licenses</h3>
+                  <p className="text-xs text-zinc-400">Enterprise foundations and non-profit trusts deployed on Schools24</p>
+                </div>
+                <button
+                  onClick={() => alert("Opening Multi-Tenant Provisioning Wizard...")}
+                  className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-lg transition-colors"
+                >
+                  + Provision New Tenant
+                </button>
+              </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
                   <thead>
                     <tr className="border-b border-[#27272a] text-zinc-400 pb-2">
-                      <th className="py-2.5 font-semibold">Service</th>
-                      <th className="py-2.5 font-semibold">Endpoint / Cluster</th>
-                      <th className="py-2.5 font-semibold">Type</th>
-                      <th className="py-2.5 font-semibold">Latency</th>
+                      <th className="py-2.5 font-semibold">Tenant ID</th>
+                      <th className="py-2.5 font-semibold">Organization Name</th>
+                      <th className="py-2.5 font-semibold">Schools</th>
+                      <th className="py-2.5 font-semibold">Students</th>
+                      <th className="py-2.5 font-semibold">Tier Plan</th>
+                      <th className="py-2.5 font-semibold">Run Rate</th>
                       <th className="py-2.5 font-semibold">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#1e1e24]">
-                    {SERVICES.map((srv, idx) => (
+                    {SAAS_TENANTS.map((t, idx) => (
                       <tr key={idx} className="hover:bg-zinc-900/40 transition-colors">
-                        <td className="py-3 font-semibold text-white">{srv.name}</td>
-                        <td className="py-3 font-mono text-zinc-400">{srv.url}</td>
-                        <td className="py-3 text-zinc-400">{srv.type}</td>
-                        <td className="py-3 font-mono text-emerald-400">{srv.latency}</td>
+                        <td className="py-3 font-mono text-zinc-400">{t.id}</td>
+                        <td className="py-3 font-semibold text-white">{t.name}</td>
+                        <td className="py-3 font-mono text-zinc-300">{t.schools} nodes</td>
+                        <td className="py-3 font-mono text-zinc-300">{t.students.toLocaleString()}</td>
+                        <td className="py-3 text-amber-400 font-medium">{t.plan}</td>
+                        <td className="py-3 font-mono text-emerald-400">{t.mrr}</td>
                         <td className="py-3">
                           <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                            {srv.status}
+                            {t.status}
                           </span>
                         </td>
                       </tr>
@@ -509,10 +600,11 @@ export const DevDashboard = () => {
                 </table>
               </div>
             </div>
+
           </div>
         )}
 
-        {/* ── TAB: FOUNDATION & CSR ANALYTICS (EXCLUSIVELY IN DEV DASHBOARD) ── */}
+        {/* ── TAB 2: FOUNDATION & CSR ANALYTICS ── */}
         {activeTab === 'analytics' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -541,7 +633,6 @@ export const DevDashboard = () => {
               </div>
             </div>
 
-            {/* CSR Donors & Hardware Allocations */}
             <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-3">
               <div className="flex items-center justify-between border-b border-[#27272a] pb-3">
                 <span className="text-sm font-bold text-white">
@@ -574,7 +665,7 @@ export const DevDashboard = () => {
           </div>
         )}
 
-        {/* ── TAB 2: DATABASE EXPLORER ── */}
+        {/* ── TAB 3: DATABASE EXPLORER ── */}
         {activeTab === 'database' && (
           <div className="space-y-6">
             <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5">
@@ -597,10 +688,9 @@ export const DevDashboard = () => {
           </div>
         )}
 
-        {/* ── TAB 3: API RUNNER ── */}
+        {/* ── TAB 4: API RUNNER ── */}
         {activeTab === 'api' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Presets List */}
             <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-3">
               <h3 className="text-sm font-bold text-white">Preset Endpoints</h3>
               <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
@@ -631,10 +721,8 @@ export const DevDashboard = () => {
               </div>
             </div>
 
-            {/* Request & Response Console */}
             <div className="lg:col-span-2 space-y-4">
               <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-4">
-                {/* Input URL */}
                 <div className="flex gap-2">
                   <select
                     value={customMethod}
@@ -663,7 +751,6 @@ export const DevDashboard = () => {
                   </button>
                 </div>
 
-                {/* Request Payload Editor for POST */}
                 {customMethod !== 'GET' && (
                   <div>
                     <label className="block text-xs font-semibold text-zinc-400 mb-1">JSON Payload Body</label>
@@ -676,7 +763,6 @@ export const DevDashboard = () => {
                   </div>
                 )}
 
-                {/* Response Viewer */}
                 <div>
                   <div className="flex items-center justify-between text-xs mb-2">
                     <span className="font-semibold text-zinc-400">Response Payload</span>
@@ -692,7 +778,7 @@ export const DevDashboard = () => {
                     {apiResponse ? (
                       <pre>{JSON.stringify(apiResponse, null, 2)}</pre>
                     ) : (
-                      <span className="text-zinc-600 italic">Click Execute to inspect response data from the live server.</span>
+                      <span className="text-zinc-600 italic">Click Execute to test endpoints against the live PostgreSQL database.</span>
                     )}
                   </div>
                 </div>
@@ -701,7 +787,7 @@ export const DevDashboard = () => {
           </div>
         )}
 
-        {/* ── TAB 4: WEBRTC STREAMS ── */}
+        {/* ── TAB 5: WEBRTC STREAMS ── */}
         {activeTab === 'streams' && (
           <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-4">
             <h3 className="text-sm font-bold text-white">Live WebRTC Masterclass Broadcast Relays</h3>
@@ -729,7 +815,7 @@ export const DevDashboard = () => {
           </div>
         )}
 
-        {/* ── TAB 5: LIVE LOGS ── */}
+        {/* ── TAB 6: LIVE LOGS ── */}
         {activeTab === 'logs' && (
           <div className="bg-[#0e0e11] border border-[#27272a] rounded-xl p-5 space-y-4">
             <div className="flex items-center justify-between">
